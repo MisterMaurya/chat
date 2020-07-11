@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no content='no-cache'">
+    <title>BuddyChatter</title>
+    <link rel="stylesheet" href="webjars/bootstrap/4.5.0/css/bootstrap.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css2?family=Crafty+Girls&display=swap" rel="stylesheet">
+    <style>
+
+        .media img, .msg {
+            width: 45px;
+            height: 45px;
+            border-radius: 30px;
+            border: 2px solid rgba(0, 23, 170, 0.02);
+            object-fit: cover;
+        }
+
+        .name {
+            font-size: 18px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #friend-list {
+            padding-left: 1rem;
+            margin-bottom: 0;
+        }
+
+
+        #msgList::-webkit-scrollbar {
+            width: 2px;
+            background-color: #F5F5F5;
+        }
+
+        #msgList::-webkit-scrollbar-thumb {
+            background-color: #000000;
+            border: 2px solid #555555;
+        }
+
+
+    </style>
+</head>
+<body onload="connect()">
+
+<!--
+<div class="row justify-content-center" hidden>
+    <div class="alert" id="alertBox" role="alert">
+    </div>
+</div>
+-->
+
+<div class="container">
+    <div class="row justify-content-center p-5">
+        <h2 class="text-center text-capitalize text-dark" style="font-family: 'Crafty Girls', cursive;">Welcome to
+            Buddy<b class="text-danger">Chat</b>ter</h2>
+    </div>
+
+
+    <div class="row justify-content-center" id="signUp" hidden>
+        <div class="col-md-5 border rounded shadow-sm  p-5  bg-white">
+            <form class=" " id="prospects_form"
+                  onsubmit="return register()" autocomplete="off">
+                <div class="form-group">
+                    <label for="firstName">First name</label>
+                    <input type="text" class="form-control" placeholder="Kelvin" id="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last name</label>
+                    <input type="text" class="form-control" placeholder="Doe" id="lastName" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail4">Email</label>
+                    <input type="email" class="form-control" id="inputEmail4" placeholder="abc@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword4">Password</label>
+                    <input type="password" class="form-control" id="inputPassword4" placeholder="********" required>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1"
+                           checked>
+                    <label class="form-check-label pr-5" for="gridRadios1">
+                        Male
+                    </label>
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                    <label class="form-check-label" for="gridRadios2">
+                        Female
+                    </label>
+                </div>
+                <div class="row justify-content-center mt-4">
+                    <div>
+                        <button type="submit" class="btn btn-primary">Sign Up</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" id="logIn">
+        <div class="col-md-5 border  rounded shadow-sm p-5">
+            <form class="" id="loginDiv"
+                  onsubmit=" return false">
+                <div class="form-group">
+                    <label for="inputEmail4Login">Email</label>
+                    <input type="email" class="form-control" id="inputEmail4Login" placeholder="abc@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword4Login">Password</label>
+                    <input type="password" class="form-control" id="inputPassword4Login" placeholder="********"
+                           required>
+                </div>
+                <div class="row justify-content-center">
+                    <div>
+                        <button type="submit" class="btn btn-primary" onclick="loginBuddy()">Log In</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" id="showLogIn" hidden>
+        <div class="col-md-5 m-5 border p-4 text-center text-capitalize text-dark shadow-sm bg-white rounded border">
+            Have an account?
+            <a href="#" class="text-primary" onclick="hideShow()">Log in</a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" id="showSignUp">
+        <div class="col-md-5  m-5 border p-4 text-center text-capitalize text-dark shadow-sm bg-white rounded border">
+            Don't have an account? <a href="#" class="text-primary" onclick="hideShow()">Sign up</a>
+        </div>
+    </div>
+
+    <!--  <div class="container border  &lt;!&ndash;border-bottom-0&ndash;&gt; " >-->
+    <div class="row justify-content-center " id="loginSuccess" hidden>
+        <div class="col-md-5 p-3   border shadow-sm bg-white    d-flex  bg-success justify-content-center">
+            <div class="card border-0 border-white  " style="width: 18rem;">
+                <img src=""
+                     id="profilePic" class="card-img-top  border border-danger" alt="..." style="border-radius: 50%; width: 300px; height: 300px">
+                <div class="card-body  text-center">
+                    <h5 class="card-title" id="profileName">Pawan Maurya</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                        the
+                        card's content.</p>
+                    <button type="button" class="btn btn-primary m-2" id="friendListButton" onclick="friendList()">
+                        Find Friend
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-100"></div>
+    <div class="row justify-content-center" id="dynamicFriendList" hidden>
+        <div class="col-md-5 border border p-3 pb-1 border-top-0  ">
+            <ul class="list-unstyled" id='friend-list'>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="chatBox" hidden>
+    <div class="row justify-content-center">
+        <div class="col-md-5 border ">
+            <div class="row justify-content-start align-items-center m-2">
+                <img class="msg" src="https://data.whicdn.com/images/45506285/original.png" alt=""
+                     id="receiverProfileImage">
+                <div class=' ml-2 name' id="receiverName">
+                    Pawan Maurya
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-5 border border-top-0 overflow-auto" id="msgList" style="height: 200px; overflow: hidden">
+            <!--  Send  Start-->
+            <!--    <div class="row justify-content-start  pl-1 mb-1">
+                    <div class="card" style="width: 18rem;">
+                        <p class="card-text p-2" id="senderMsg">With supporting text below as a natural lead-in to
+                            additional
+                            content.</p>
+                    </div>
+                </div>-->
+            <!--  Send  End-->
+
+            <!-- Receive start-->
+            <!--    <div class="row  justify-content-end mb-1 pr-1">
+                    <div class="card text-right" style="width: 18rem;">
+                        <p class="card-text p-2" id="receiverMsg">With supporting text below as a natural lead-in to
+                            additional content.</p>
+                    </div>
+                </div>-->
+            <!--  Receive  End-->
+        </div>
+    </div>
+</div>
+
+<div class="container" id="showSendButton" hidden>
+    <div class="row justify-content-center">
+        <div class=" col-md-5 border mb-2">
+            <div class="input-group text-wrap mt-2 mb-2">
+                <input type="text" class="form-control" aria-label="" placeholder="Message" id="msgTextSend">
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-danger" value="" id="sendButton" onclick="sender()">
+                        Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center m-3 p-2">
+    <h4 class="text-center text-capitalize text-dark" style="font-family: 'Crafty Girls', cursive;">Created By
+        <b class="text-danger">P R O</b></h4>
+</div>
+
+<script src="msg.js"></script>
+<script src="Home.js"></script>
+<script src="/webjars/jquery/jquery.min.js"></script>
+<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+<script src="webjars/jquery/3.5.1/jquery.slim.min.js"></script>
+<script src="webjars/popper.js/1.16.1/dist/umd/popper.min.js"></script>
+<script src="webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+
+</body>
+</html>

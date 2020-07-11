@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <title>Hello, world!</title>
+
+    <style>
+    </style>
+</head>
+<body onload="getProfileData()">
+<div class="container">
+    <div class="card" style="width: 20rem;">
+        <div class="card-header">
+            Sololearn
+        </div>
+        <img src="https://api.sololearn.com/Uploads/Avatars/4446335.jpg"
+             class="card-img-top rounded-circle mx-auto  shadow-sm p-1 mb-1 bg-white rounded"
+             alt="..." style="width: 300px">
+        <div class="card-body">
+            <h5 class="card-title d-flex justify-content-center" id="name"></h5>
+            <h5 class="card-title d-flex justify-content-center" id="level"></h5>
+            <h5 class="card-title d-flex justify-content-center" id="xp"></h5>
+            <ul class="list-group list-group-flush" id="achievements">
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    function getProfileData() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://cors-anywhere.herokuapp.com/' + 'https://www.sololearn.com/Profile/4446335', true);
+        xhr.onload = function () {
+            if (!(xhr.readyState == XMLHttpRequest.DONE && xhr.status == 200)) {
+                return;
+            }
+            var text = this.responseText;
+            var parser = new DOMParser();
+            var htmlDoc = parser.parseFromString(text, "text/html");
+            var user = htmlDoc.querySelector(".user");
+            console.log(user);
+            var name = user.querySelector("h1").innerHTML.trim();
+            var level = user.querySelector("div.detail div").innerHTML.trim();
+            level = level.substring(20, level.length).trim();
+            var xp = user.querySelector("span").innerHTML.trim();
+            xp = xp.substring(0, xp.length - 3);
+            document.getElementById("name").innerText = name;
+            document.getElementById("level").innerText = 'Level:' + level;
+            document.getElementById("xp").innerText = xp + ' XP';
+            console.log("BAdge");
+            const userAchievements = htmlDoc.querySelector('.userAchievements');
+            const achievements = userAchievements.querySelectorAll(".achievement");
+            let ul = document.getElementById("achievements");
+            var myvar;
+            for (var i = 0, len = achievements.length; i < len; i++) {
+                var elementsByClassName = achievements[i].querySelector(".icon");
+                var title = achievements[i].querySelector(".title").innerHTML.trim();
+                var description = achievements[i].querySelector(".description").innerHTML.trim();
+                var element = elementsByClassName.getElementsByTagName("IMG");
+                var image = element[0].getAttribute("src");
+                var backgroundColor = elementsByClassName.style.backgroundColor.trim();
+                if ("" === backgroundColor) {
+                    backgroundColor = "#999";
+                }
+                myvar = '<li class="list-group-item">' +
+                    '                    <div class="card border-light mb-3" style="max-width: 300px;">' +
+                    '                    <div class="row no-gutters">' +
+                    '                    <div class="col-md-4 align-self-center"' +
+                    '                style="background-color: ' + backgroundColor + ';border-radius: 50%">' +
+                    '                    <img src="' + image + '" class="card-img"' +
+                    '                alt="...">' +
+                    '                    </div>' +
+                    '                    <div class="col-md-8">' +
+                    '                    <div class="card-body">' +
+                    '                    <h5 class="card-title">' + title + '</h5>' +
+                    '                <p class="card-text">' + description + '</p>' +
+                    '                </div>' +
+                    '                </div>' +
+                    '                </div>' +
+                    '                </div>' +
+                    '                </li>';
+
+                ul.innerHTML += myvar;
+            }
+        };
+        xhr.send(null);
+    }
+</script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+</body>
+</html>
